@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,13 +22,21 @@ jobs:
         env:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
-          PORT: ${{ secrets.HOSTINGER_PORT || '22' }}
+          PORT: ${{ secrets.HOSTINGER_PORT }}
           APP_DIR: /root/ticket_app/frontend-webapp
         run: |
           ssh -o StrictHostKeyChecking=no -p "$PORT" "$USER@$HOST" <<'EOSSH'
           set -euo pipefail
-          cd $APP_DIR
+
+          echo "==> Going to app dir"
+          cd "$APP_DIR"
+
+          echo "==> Updating code"
           git fetch origin main
           git reset --hard origin/main
+
+          echo "==> Deploying containers"
           docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+
+          echo "==> Done"
           EOSSH
