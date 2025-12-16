@@ -5,6 +5,10 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,12 +27,13 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ secrets.HOSTINGER_PORT }}
-          APP_DIR: /root/ticket_app/frontend-webapp
         run: |
           ssh -o StrictHostKeyChecking=no -p "$PORT" "$USER@$HOST" <<'EOSSH'
           set -euo pipefail
 
-          echo "==> Going to app dir"
+          APP_DIR="/root/ticket_app/frontend-webapp"
+
+          echo "==> Going to app dir: $APP_DIR"
           cd "$APP_DIR"
 
           echo "==> Updating code"
@@ -38,5 +43,5 @@ jobs:
           echo "==> Deploying containers"
           docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
 
-          echo "==> Done"
+          echo "==> Deploy finished successfully"
           EOSSH
