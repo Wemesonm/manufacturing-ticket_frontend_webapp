@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import styled from 'styled-components';
 import {
   PieChart,
   Pie,
@@ -21,36 +20,7 @@ import {Card, CardBody, CardHeader, CardTitle} from '@/src/components/atoms/card
 import {StatCard} from '@/src/components/molecules/stat-card';
 import {catalogService, Line, SeverityLevel, Ticket, ticketService, TicketStatus} from '@/src/domain';
 
-const PageTitle = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${({theme}) => theme.colors.gray[800]};
-  margin-bottom: ${({theme}) => theme.spacing.lg};
-`;
-
-const Grid = styled.div`
-  display: grid;
-  gap: ${({theme}) => theme.spacing.lg};
-  margin-bottom: ${({theme}) => theme.spacing.lg};
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const ChartsGrid = styled.div`
-  display: grid;
-  gap: ${({theme}) => theme.spacing.lg};
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-const ChartContainer = styled.div`
-  height: 320px;
-  width: 100%;
-`;
+import * as S from './dashboard-screen.styled';
 
 export function DashboardScreen() {
   const [tickets, setTickets] = React.useState<Ticket[]>([]);
@@ -85,9 +55,9 @@ export function DashboardScreen() {
 
   if (isLoading) {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh'}}>
+      <S.LoadingContainer>
         <Loader2 className="animate-spin" size={32} color="#0284c7" />
-      </div>
+      </S.LoadingContainer>
     );
   }
 
@@ -120,21 +90,21 @@ export function DashboardScreen() {
 
   return (
     <div>
-      <PageTitle>Production Dashboard</PageTitle>
+      <S.PageTitle>Production Dashboard</S.PageTitle>
 
-      <Grid>
+      <S.Grid>
         <StatCard label="Open Tickets" value={totalOpen} icon={AlertTriangle} color="#2563eb" bgColor="#dbeafe" />
         <StatCard label="Closed Tickets" value={totalClosed} icon={CheckCircle} color="#16a34a" bgColor="#dcfce7" />
         <StatCard label="Lines" value={lines.length} icon={Clock} color="#9333ea" bgColor="#f3e8ff" />
-      </Grid>
+      </S.Grid>
 
-      <ChartsGrid>
+      <S.ChartsGrid>
         <Card>
           <CardHeader>
             <CardTitle>Tickets by Status</CardTitle>
           </CardHeader>
           <CardBody>
-            <ChartContainer>
+            <S.ChartContainer>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -154,7 +124,7 @@ export function DashboardScreen() {
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </S.ChartContainer>
           </CardBody>
         </Card>
 
@@ -163,7 +133,7 @@ export function DashboardScreen() {
             <CardTitle>Tickets by Severity</CardTitle>
           </CardHeader>
           <CardBody>
-            <ChartContainer>
+            <S.ChartContainer>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={severityData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -173,10 +143,10 @@ export function DashboardScreen() {
                   <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
-            </ChartContainer>
+            </S.ChartContainer>
           </CardBody>
         </Card>
-      </ChartsGrid>
+      </S.ChartsGrid>
     </div>
   );
 }

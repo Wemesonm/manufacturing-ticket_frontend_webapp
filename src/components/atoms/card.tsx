@@ -1,26 +1,23 @@
 'use client';
 
-import styled from 'styled-components';
+import React from 'react';
 
-export const Card = styled.div`
-  background-color: ${({theme}) => theme.colors.white};
-  border-radius: ${({theme}) => theme.borderRadius.lg};
-  border: 1px solid ${({theme}) => theme.colors.gray[200]};
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-`;
+import * as S from './card.styled';
 
-export const CardHeader = styled.div`
-  padding: ${({theme}) => theme.spacing.lg};
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[100]};
-`;
+export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
-export const CardBody = styled.div`
-  padding: ${({theme}) => theme.spacing.lg};
-`;
+export function Card(props: CardProps) {
+  return <S.Container {...props} />;
+}
 
-export const CardTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: ${({theme}) => theme.colors.gray[800]};
-`;
+export function CardHeader(props: CardProps) {
+  return <S.Header {...props} />;
+}
+
+export function CardBody(props: CardProps) {
+  return <S.Body {...props} />;
+}
+
+export function CardTitle(props: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <S.Title {...props} />;
+}

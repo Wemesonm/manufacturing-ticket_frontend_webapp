@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import styled from 'styled-components';
 import {ArrowLeft, Loader2, Save} from 'lucide-react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
@@ -23,50 +22,7 @@ import {
   Workstation,
 } from '@/src/domain';
 
-const PageHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({theme}) => theme.spacing.md};
-  margin-bottom: ${({theme}) => theme.spacing.lg};
-`;
-
-const PageTitle = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${({theme}) => theme.colors.gray[800]};
-`;
-
-const SectionHeader = styled.h2`
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: ${({theme}) => theme.colors.gray[700]};
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[200]};
-  padding-bottom: ${({theme}) => theme.spacing.sm};
-  margin-bottom: ${({theme}) => theme.spacing.md};
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: ${({theme}) => theme.spacing.md};
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-const Grid3 = styled(Grid)`
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const FormActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: ${({theme}) => theme.spacing.sm};
-  margin-top: ${({theme}) => theme.spacing.lg};
-`;
+import * as S from './create-screen.styled';
 
 export function TicketCreateScreen() {
   const router = useRouter();
@@ -236,28 +192,28 @@ export function TicketCreateScreen() {
 
   if (isLoadingInit) {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', padding: '48px'}}>
+      <S.LoadingContainer>
         <Loader2 className="animate-spin" size={32} color="#0284c7" />
-      </div>
+      </S.LoadingContainer>
     );
   }
 
   return (
     <div>
-      <PageHeader>
+      <S.PageHeader>
         <Link href={ROUTES.tickets}>
           <Button variant="ghost">
             <ArrowLeft size={16} /> Back
           </Button>
         </Link>
-        <PageTitle>Open Ticket</PageTitle>
-      </PageHeader>
+        <S.PageTitle>Open Ticket</S.PageTitle>
+      </S.PageHeader>
 
       <Card>
         <CardBody>
           <form onSubmit={handleSubmit}>
-            <SectionHeader>Ticket Information</SectionHeader>
-            <Grid>
+            <S.SectionHeader>Ticket Information</S.SectionHeader>
+            <S.Grid>
               <FormField label="Title">
                 <Input value={formData.title} onChange={handleChange('title')} required />
               </FormField>
@@ -271,14 +227,14 @@ export function TicketCreateScreen() {
                   ))}
                 </Select>
               </FormField>
-            </Grid>
+            </S.Grid>
 
             <FormField label="Description">
               <TextArea rows={4} value={formData.description} onChange={handleChange('description')} />
             </FormField>
 
-            <SectionHeader>Location</SectionHeader>
-            <Grid>
+            <S.SectionHeader>Location</S.SectionHeader>
+            <S.Grid>
               <FormField label="Site">
                 <Select value={formData.siteId} onChange={handleChange('siteId')}>
                   <option value="">Select site</option>
@@ -309,10 +265,10 @@ export function TicketCreateScreen() {
                   ))}
                 </Select>
               </FormField>
-            </Grid>
+            </S.Grid>
 
-            <SectionHeader>Failure Details</SectionHeader>
-            <Grid3>
+            <S.SectionHeader>Failure Details</S.SectionHeader>
+            <S.Grid3>
               <FormField label="Failure Category">
                 <Select value={formData.failureCategoryId} onChange={handleChange('failureCategoryId')}>
                   <option value="">Select category</option>
@@ -343,16 +299,16 @@ export function TicketCreateScreen() {
                   ))}
                 </Select>
               </FormField>
-            </Grid3>
+            </S.Grid3>
 
-            <FormActions>
+            <S.FormActions>
               <Button type="button" variant="ghost" onClick={() => router.back()}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : <><Save size={16} /> Save Ticket</>}
               </Button>
-            </FormActions>
+            </S.FormActions>
           </form>
         </CardBody>
       </Card>

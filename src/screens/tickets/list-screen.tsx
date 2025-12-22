@@ -1,65 +1,15 @@
-"use client";
+'use client';
 
-import React from "react";
-import styled from "styled-components";
-import { Loader2, Plus, Search } from "lucide-react";
-import Link from "next/link";
+import React from 'react';
+import {Loader2, Plus} from 'lucide-react';
+import Link from 'next/link';
 
-import { Button } from "@/src/components/atoms/button";
-import { Card } from "@/src/components/atoms/card";
-import { Input, Select } from "@/src/components/atoms/input";
-import { TicketTable } from "@/src/components/organisms/ticket-table";
-import {
-  catalogService,
-  Line,
-  SeverityLevel,
-  ticketService,
-  TicketStatus,
-  Ticket,
-} from "@/src/domain";
-import { ROUTES } from "@/src/constants/routes";
+import {Select} from '@/src/components/atoms/input';
+import {TicketTable} from '@/src/components/organisms/ticket-table';
+import {catalogService, Line, SeverityLevel, ticketService, TicketStatus, Ticket} from '@/src/domain';
+import {ROUTES} from '@/src/constants/routes';
 
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-
-  @media (min-width: 640px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
-
-const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.gray[800]};
-`;
-
-const FilterBar = styled(Card)`
-  padding: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.spacing.md};
-
-  @media (min-width: 768px) {
-    grid-template-columns: 2fr 1fr 1fr;
-  }
-`;
-
-const SearchWrapper = styled.div`
-  position: relative;
-`;
-
-const SearchIcon = styled(Search)`
-  position: absolute;
-  left: 12px;
-  top: 10px;
-  color: ${({ theme }) => theme.colors.gray[400]};
-`;
+import * as S from './list-screen.styled';
 
 export function TicketListScreen() {
   const [tickets, setTickets] = React.useState<Ticket[]>([]);
@@ -109,90 +59,67 @@ export function TicketListScreen() {
   }, []);
 
   const filteredTickets = React.useMemo(() => {
-    return tickets.filter((ticket) => {
-      const matchesStatus = filterStatus
-        ? ticket.statusId === Number(filterStatus)
-        : true;
-      const matchesLine = filterLine
-        ? ticket.lineId === Number(filterLine)
-        : true;
+    return tickets.filter(ticket => {
+      const matchesStatus = filterStatus ? ticket.statusId === Number(filterStatus) : true;
+      const matchesLine = filterLine ? ticket.lineId === Number(filterLine) : true;
       const search = searchTerm.toLowerCase();
-      const title = ticket.title?.toLowerCase() ?? "";
-      const matchesSearch =
-        title.includes(search) ||
-        `#${ticket.id}`.toLowerCase().includes(search);
+      const title = ticket.title?.toLowerCase() ?? '';
+      const matchesSearch = title.includes(search) || `#${ticket.id}`.toLowerCase().includes(search);
       return matchesStatus && matchesLine && matchesSearch;
     });
   }, [tickets, filterStatus, filterLine, searchTerm]);
 
   return (
     <div>
-      <Header>
-        <Title>Tickets Wwemeson</Title>
+      <S.Header>
+        <S.Title>Tickets Wwemeson</S.Title>
         <Link href={ROUTES.ticketCreate}>
-          <Button variant="primary">
+          <S.NewTicketButton variant="primary">
             <Plus size={16} /> New Ticket
-          </Button>
+          </S.NewTicketButton>
         </Link>
-      </Header>
+      </S.Header>
 
-      <FilterBar>
-        <SearchWrapper>
-          <SearchIcon size={16} />
-          <Input
-            style={{ paddingLeft: 36 }}
+      <S.FilterBar>
+        <S.SearchWrapper>
+          <S.SearchIcon size={16} />
+          <S.SearchInput
             type="text"
             placeholder="Search code or title..."
             value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
+            onChange={event => setSearchTerm(event.target.value)}
           />
-        </SearchWrapper>
-        <Select
-          value={filterStatus}
-          onChange={(event) => setFilterStatus(event.target.value)}
-        >
+        </S.SearchWrapper>
+        <Select value={filterStatus} onChange={event => setFilterStatus(event.target.value)}>
           <option value="">All Statuses</option>
-          {statuses.map((status) => (
+          {statuses.map(status => (
             <option key={status.id} value={status.id}>
               {status.name}
             </option>
           ))}
         </Select>
-        <Select
-          value={filterLine}
-          onChange={(event) => setFilterLine(event.target.value)}
-        >
+        <Select value={filterLine} onChange={event => setFilterLine(event.target.value)}>
           <option value="">All Lines</option>
-          {lines.map((line) => (
+          {lines.map(line => (
             <option key={line.id} value={line.id}>
               {line.code || line.name}
             </option>
           ))}
         </Select>
-      </FilterBar>
+      </S.FilterBar>
 
       {loading ? (
-        <div
-          style={{ display: "flex", justifyContent: "center", padding: "48px" }}
-        >
+        <S.LoadingContainer>
           <Loader2 className="animate-spin" size={32} color="#0284c7" />
-        </div>
+        </S.LoadingContainer>
       ) : (
         <TicketTable
           tickets={filteredTickets}
-          getStatusName={(id) =>
-            statuses.find((status) => status.id === id)?.name ?? `${id}`
-          }
-          getStatusCode={(id) =>
-            statuses.find((status) => status.id === id)?.code ?? ""
-          }
-          getLineName={(id) =>
-            lines.find((line) => line.id === id)?.name ?? `${id}`
-          }
-          getSeverityName={(id) =>
-            severities.find((severity) => severity.id === id)?.name ?? `${id}`
-          }
-          getTicketHref={(id) => ROUTES.ticketDetail(id)}
+          getStatusName={id => statuses.find(status => status.id === id)?.name ?? `${id}`}
+          getStatusCode={id => statuses.find(status => status.id === id)?.code ?? ''}
+          getLineName={id => lines.find(line => line.id === id)?.name ?? `${id}`}
+          getSeverityName={id => severities.find(severity => severity.id === id)?.name ?? `${id}`}
+          getTicketHref={id => ROUTES.ticketDetail(id)}
         />
       )}
     </div>

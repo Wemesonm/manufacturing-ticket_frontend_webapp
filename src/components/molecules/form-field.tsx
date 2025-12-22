@@ -1,26 +1,8 @@
 'use client';
 
 import React from 'react';
-import styled from 'styled-components';
 
-const Wrapper = styled.div`
-  margin-bottom: ${({theme}) => theme.spacing.md};
-  width: 100%;
-`;
-
-const Label = styled.label`
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: ${({theme}) => theme.colors.gray[700]};
-  margin-bottom: ${({theme}) => theme.spacing.xs};
-`;
-
-const LoadingText = styled.span`
-  color: ${({theme}) => theme.colors.brand[500]};
-  font-size: 0.75rem;
-  margin-left: 4px;
-`;
+import * as S from './form-field.styled';
 
 interface FormFieldProps {
   label: string;
@@ -30,12 +12,12 @@ interface FormFieldProps {
 
 export function FormField({label, children, loading}: FormFieldProps) {
   return (
-    <Wrapper>
-      <Label>
+    <S.Wrapper>
+      <S.Label>
         {label}
-        {loading && <LoadingText>(loading...)</LoadingText>}
-      </Label>
+        {loading && <S.LoadingText>(loading...)</S.LoadingText>}
+      </S.Label>
       {children}
-    </Wrapper>
+    </S.Wrapper>
   );
 }

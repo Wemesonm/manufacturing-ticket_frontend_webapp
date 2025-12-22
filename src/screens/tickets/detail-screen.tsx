@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
 import {ArrowLeft, Calendar, Clock, Loader2, MapPin, Save} from 'lucide-react';
 
@@ -23,92 +22,7 @@ import {
 import {ROUTES} from '@/src/constants/routes';
 import {formatDate} from '@/src/utils/date';
 
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({theme}) => theme.spacing.md};
-  margin-bottom: ${({theme}) => theme.spacing.lg};
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-`;
-
-const TicketTitleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({theme}) => theme.spacing.md};
-`;
-
-const Code = styled.h1`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${({theme}) => theme.colors.gray[800]};
-`;
-
-const SubHeader = styled.p`
-  color: ${({theme}) => theme.colors.gray[500]};
-  font-size: 0.875rem;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: ${({theme}) => theme.spacing.lg};
-
-  @media (min-width: 1024px) {
-    grid-template-columns: 2fr 1fr;
-  }
-`;
-
-const MainContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({theme}) => theme.spacing.lg};
-`;
-
-const Sidebar = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({theme}) => theme.spacing.lg};
-`;
-
-const InfoRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: ${({theme}) => theme.spacing.xs} 0;
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[100]};
-
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const Label = styled.span`
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: ${({theme}) => theme.colors.gray[500]};
-  font-weight: 600;
-`;
-
-const Value = styled.span`
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: ${({theme}) => theme.colors.gray[900]};
-  text-align: right;
-`;
-
-const DescriptionBox = styled.div`
-  background-color: ${({theme}) => theme.colors.gray[50]};
-  padding: ${({theme}) => theme.spacing.md};
-  border-radius: ${({theme}) => theme.borderRadius.md};
-  color: ${({theme}) => theme.colors.gray[700]};
-  white-space: pre-wrap;
-  line-height: 1.6;
-`;
+import * as S from './detail-screen.styled';
 
 interface TicketDetailScreenProps {
   ticketId: string;
@@ -215,50 +129,50 @@ export function TicketDetailScreen({ticketId}: TicketDetailScreenProps) {
 
   if (loading) {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', padding: '48px'}}>
+      <S.LoadingContainer>
         <Loader2 className="animate-spin" size={32} color="#0284c7" />
-      </div>
+      </S.LoadingContainer>
     );
   }
 
   if (!ticket) {
     return (
-      <div style={{display: 'flex', flexDirection: 'column', gap: 16, padding: 32}}>
-        <p style={{color: '#b91c1c', fontWeight: 600}}>{errorMessage ?? 'Ticket não encontrado.'}</p>
+      <S.ErrorContainer>
+        <S.ErrorMessage>{errorMessage ?? 'Ticket não encontrado.'}</S.ErrorMessage>
         <Link href={ROUTES.tickets}>
           <Button variant="primary">Voltar para Tickets</Button>
         </Link>
-      </div>
+      </S.ErrorContainer>
     );
   }
 
   return (
     <div>
-      <Header>
-        <TicketTitleWrapper>
+      <S.Header>
+        <S.TicketTitleWrapper>
           <Link href={ROUTES.tickets}>
             <Button variant="ghost">
               <ArrowLeft size={16} /> Back
             </Button>
           </Link>
           <div>
-            <Code>{ticket.title || `Ticket #${ticket.id}`}</Code>
-            <SubHeader>Opened {formatDate(ticket.openedAt)}</SubHeader>
+            <S.Code>{ticket.title || `Ticket #${ticket.id}`}</S.Code>
+            <S.SubHeader>Opened {formatDate(ticket.openedAt)}</S.SubHeader>
           </div>
-        </TicketTitleWrapper>
+        </S.TicketTitleWrapper>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? <Loader2 className="animate-spin" size={20} /> : <><Save size={16} /> Save Changes</>}
         </Button>
-      </Header>
+      </S.Header>
 
-      <Grid>
-        <MainContent>
+      <S.Grid>
+        <S.MainContent>
           <Card>
             <CardHeader>
               <CardTitle>Ticket Description</CardTitle>
             </CardHeader>
             <CardBody>
-              <DescriptionBox>{ticket.description || 'No description provided.'}</DescriptionBox>
+              <S.DescriptionBox>{ticket.description || 'No description provided.'}</S.DescriptionBox>
             </CardBody>
           </Card>
 
@@ -287,34 +201,34 @@ export function TicketDetailScreen({ticketId}: TicketDetailScreenProps) {
               </FormField>
             </CardBody>
           </Card>
-        </MainContent>
+        </S.MainContent>
 
-        <Sidebar>
+        <S.Sidebar>
           <Card>
             <CardHeader>
               <CardTitle>Details</CardTitle>
             </CardHeader>
             <CardBody>
-              <InfoRow>
-                <Label>Ticket ID</Label>
-                <Value>#{ticket.id}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Severity</Label>
-                <Value>{getSeverityName(ticket.severityId)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Status</Label>
-                <Value>{statuses.find(status => status.id === ticket.statusId)?.name ?? '--'}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Opened</Label>
-                <Value>{formatDate(ticket.openedAt)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Closed</Label>
-                <Value>{formatDate(ticket.closedAt)}</Value>
-              </InfoRow>
+              <S.InfoRow>
+                <S.Label>Ticket ID</S.Label>
+                <S.Value>#{ticket.id}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Severity</S.Label>
+                <S.Value>{getSeverityName(ticket.severityId)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Status</S.Label>
+                <S.Value>{statuses.find(status => status.id === ticket.statusId)?.name ?? '--'}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Opened</S.Label>
+                <S.Value>{formatDate(ticket.openedAt)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Closed</S.Label>
+                <S.Value>{formatDate(ticket.closedAt)}</S.Value>
+              </S.InfoRow>
             </CardBody>
           </Card>
 
@@ -323,22 +237,22 @@ export function TicketDetailScreen({ticketId}: TicketDetailScreenProps) {
               <CardTitle>Location</CardTitle>
             </CardHeader>
             <CardBody>
-              <InfoRow>
-                <Label>Line</Label>
-                <Value>{getLineName(ticket.lineId)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Workstation</Label>
-                <Value>{getWorkstationName(ticket.workstationId)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Category</Label>
-                <Value>{getCategoryName(ticket.failureTypeId)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>Failure Type</Label>
-                <Value>{getFailureTypeName(ticket.failureTypeId)}</Value>
-              </InfoRow>
+              <S.InfoRow>
+                <S.Label>Line</S.Label>
+                <S.Value>{getLineName(ticket.lineId)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Workstation</S.Label>
+                <S.Value>{getWorkstationName(ticket.workstationId)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Category</S.Label>
+                <S.Value>{getCategoryName(ticket.failureTypeId)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>Failure Type</S.Label>
+                <S.Value>{getFailureTypeName(ticket.failureTypeId)}</S.Value>
+              </S.InfoRow>
             </CardBody>
           </Card>
 
@@ -347,28 +261,28 @@ export function TicketDetailScreen({ticketId}: TicketDetailScreenProps) {
               <CardTitle>Timeline</CardTitle>
             </CardHeader>
             <CardBody>
-              <InfoRow>
-                <Label>
+              <S.InfoRow>
+                <S.Label>
                   <Calendar size={14} /> Opened At
-                </Label>
-                <Value>{formatDate(ticket.openedAt)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>
+                </S.Label>
+                <S.Value>{formatDate(ticket.openedAt)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>
                   <MapPin size={14} /> On Site
-                </Label>
-                <Value>{formatDate(ticket.onSiteAt)}</Value>
-              </InfoRow>
-              <InfoRow>
-                <Label>
+                </S.Label>
+                <S.Value>{formatDate(ticket.onSiteAt)}</S.Value>
+              </S.InfoRow>
+              <S.InfoRow>
+                <S.Label>
                   <Clock size={14} /> Closed At
-                </Label>
-                <Value>{formatDate(ticket.closedAt)}</Value>
-              </InfoRow>
+                </S.Label>
+                <S.Value>{formatDate(ticket.closedAt)}</S.Value>
+              </S.InfoRow>
             </CardBody>
           </Card>
-        </Sidebar>
-      </Grid>
+        </S.Sidebar>
+      </S.Grid>
     </div>
   );
 }

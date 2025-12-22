@@ -1,41 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import styled from 'styled-components';
 
 import {Badge} from '@/src/components/atoms/badge';
 import {getStatusColors} from '@/src/constants/status';
 import {Ticket} from '@/src/domain';
 import {formatDate} from '@/src/utils/date';
 
-const TableContainer = styled.div`
-  background-color: ${({theme}) => theme.colors.white};
-  border-radius: ${({theme}) => theme.borderRadius.lg};
-  border: 1px solid ${({theme}) => theme.colors.gray[200]};
-  overflow-x: auto;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-  white-space: nowrap;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding: ${({theme}) => theme.spacing.md};
-  background-color: ${({theme}) => theme.colors.gray[50]};
-  color: ${({theme}) => theme.colors.gray[600]};
-  font-weight: 600;
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[200]};
-`;
-
-const Td = styled.td`
-  padding: ${({theme}) => theme.spacing.md};
-  border-bottom: 1px solid ${({theme}) => theme.colors.gray[100]};
-  color: ${({theme}) => theme.colors.gray[800]};
-`;
+import * as S from './ticket-table.styled';
 
 interface TicketTableProps {
   tickets: Ticket[];
@@ -65,46 +37,46 @@ export function TicketTable({
   };
 
   return (
-    <TableContainer>
-      <Table>
+    <S.TableContainer>
+      <S.Table>
         <thead>
           <tr>
-            <Th>ID</Th>
-            <Th>Title</Th>
-            <Th>Line</Th>
-            <Th>Status</Th>
-            <Th>Severity</Th>
-            <Th>Opened</Th>
-            <Th style={{textAlign: 'right'}}>Action</Th>
+            <S.Th>ID</S.Th>
+            <S.Th>Title</S.Th>
+            <S.Th>Line</S.Th>
+            <S.Th>Status</S.Th>
+            <S.Th>Severity</S.Th>
+            <S.Th>Opened</S.Th>
+            <S.Th style={{textAlign: 'right'}}>Action</S.Th>
           </tr>
         </thead>
         <tbody>
           {tickets.map(ticket => (
             <tr key={ticket.id}>
-              <Td style={{color: '#0284c7', fontWeight: 500}}>#{ticket.id}</Td>
-              <Td title={ticket.title} style={{maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+              <S.Td style={{color: '#0284c7', fontWeight: 500}}>#{ticket.id}</S.Td>
+              <S.Td title={ticket.title} style={{maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                 {ticket.title || 'No title'}
-              </Td>
-              <Td>{getLineName(ticket.lineId)}</Td>
-              <Td>{renderStatus(ticket.statusId)}</Td>
-              <Td>{getSeverityName(ticket.severityId)}</Td>
-              <Td>{formatDate(ticket.openedAt)}</Td>
-              <Td style={{textAlign: 'right'}}>
+              </S.Td>
+              <S.Td>{getLineName(ticket.lineId)}</S.Td>
+              <S.Td>{renderStatus(ticket.statusId)}</S.Td>
+              <S.Td>{getSeverityName(ticket.severityId)}</S.Td>
+              <S.Td>{formatDate(ticket.openedAt)}</S.Td>
+              <S.Td style={{textAlign: 'right'}}>
                 <Link href={getTicketHref(ticket.id)} style={{color: '#0284c7', fontWeight: 500}}>
                   View
                 </Link>
-              </Td>
+              </S.Td>
             </tr>
           ))}
           {tickets.length === 0 && (
             <tr>
-              <Td colSpan={7} style={{textAlign: 'center', padding: '48px', color: '#9ca3af'}}>
+              <S.Td colSpan={7} style={{textAlign: 'center', padding: '48px', color: '#9ca3af'}}>
                 No tickets found.
-              </Td>
+              </S.Td>
             </tr>
           )}
         </tbody>
-      </Table>
-    </TableContainer>
+      </S.Table>
+    </S.TableContainer>
   );
 }
